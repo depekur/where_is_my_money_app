@@ -18,6 +18,8 @@ class TransactionsListPage extends StatefulWidget {
 
 class _TransactionsListPageState extends State<TransactionsListPage> {
   bool _isInit = false;
+  bool _loading = false;
+  bool _everythingLoaded = false;
 
   void _showNewTransactionNav(ctx) {
     showModalBottomSheet(
@@ -51,6 +53,34 @@ class _TransactionsListPageState extends State<TransactionsListPage> {
   }
 
   Widget _body() {
+    ScrollController _scrollController = ScrollController();
+    _scrollController.addListener(() async {
+
+      if (_scrollController.position.maxScrollExtent ==
+          _scrollController.position.pixels) {
+
+        if (!_loading && !_everythingLoaded) {
+          setState(() {
+            _loading = true;
+          });
+
+          final appProvider = Provider.of<AppProvider>(context, listen: false);
+          final int currentTransactionsCount = appProvider.transactions.length;
+          await appProvider.fetchAndSetTransactions();
+
+          if (currentTransactionsCount == appProvider.transactions.length) {
+            setState(() {
+              _everythingLoaded = true;
+            });
+          }
+
+          setState(() {
+            _loading = false;
+          });
+        }
+      }
+    });
+
     return Column(
       children: [
         const HomePageBlock(),
@@ -58,24 +88,29 @@ class _TransactionsListPageState extends State<TransactionsListPage> {
         Consumer<AppProvider>(
           builder: (ctx, data, child) {
             return Container(
-              // height: (mediaQuery.size.height -
-              //         appBar.preferredSize.height -
-              //         mediaQuery.padding.top) *
-              //     0.8,
                 child: Expanded(
-                  child: ListView.builder(
-                    itemCount: data.transactions.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (data.transactions[index].type == TransactionType.exchange) {
-                        return ExchangeTransactionCard(transaction: data.transactions[index]);
-                      } else {
-                        return TransactionCard(transaction: data.transactions[index]);
-                      }
-                    },
-                  ),
-                ));
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: data.transactions.length,
+                itemBuilder: (BuildContext context, int index) {
+                  if (data.transactions[index].type ==
+                      TransactionType.exchange) {
+                    return ExchangeTransactionCard(
+                        transaction: data.transactions[index]);
+                  } else {
+                    return TransactionCard(
+                        transaction: data.transactions[index]);
+                  }
+                },
+              ),
+            ));
           },
         ),
+        if (_loading)
+          const Padding(
+            padding: EdgeInsets.all(10),
+            child: CircularProgressIndicator(),
+          )
       ],
     );
   }
@@ -97,7 +132,9 @@ class _TransactionsListPageState extends State<TransactionsListPage> {
     );
 
     return Scaffold(
-      body: SafeArea(child: _body(),),
+      body: SafeArea(
+        child: _body(),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _showNewTransactionNav(context);

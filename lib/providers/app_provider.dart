@@ -5,6 +5,8 @@ import 'package:where_is_my_money_app/models/wallet.dart';
 import 'package:where_is_my_money_app/models/category.dart';
 import 'package:where_is_my_money_app/models/transaction.dart';
 
+import '../helpers/transactions_page_size.dart';
+
 class AppProvider with ChangeNotifier {
   String _totalEur = '0';
   List<Wallet> _wallets = [];
@@ -62,11 +64,22 @@ class AppProvider with ChangeNotifier {
   }
 
   Future<void> fetchAndSetTransactions() async {
-    final List<dynamic> transactions = await HttpService.get('transaction');
+    final String url = 'transaction?offset=${_transactions.length}&size=$transactionPageSize';
+    final List<dynamic> transactions = await HttpService.get(url);
+
+    print(url);
+    print(transactions);
 
     if (transactions.isNotEmpty) {
-      _transactions =
-          transactions.map((t) => Transaction.fromResponse(t)).toList();
+      if (_transactions.isNotEmpty) {
+        _transactions = [
+          ..._transactions,
+          ...transactions.map((t) => Transaction.fromResponse(t)).toList()
+        ];
+      } else {
+        _transactions =
+            transactions.map((t) => Transaction.fromResponse(t)).toList();
+      }
     }
 
     notifyListeners();
