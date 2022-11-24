@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:where_is_my_money_app/helpers/ua_date_helper.dart';
+import 'package:where_is_my_money_app/models/transaction.dart';
 import 'package:where_is_my_money_app/providers/app_provider.dart';
 
+import '../helpers/show_snack_bar.dart';
 import '../models/transaction_type.dart';
 import '../widgets/exchange_transaction_card.dart';
 import '../widgets/home_page_block.dart';
@@ -55,10 +59,8 @@ class _TransactionsListPageState extends State<TransactionsListPage> {
   Widget _body() {
     ScrollController _scrollController = ScrollController();
     _scrollController.addListener(() async {
-
       if (_scrollController.position.maxScrollExtent ==
           _scrollController.position.pixels) {
-
         if (!_loading && !_everythingLoaded) {
           setState(() {
             _loading = true;
@@ -84,26 +86,42 @@ class _TransactionsListPageState extends State<TransactionsListPage> {
     return Column(
       children: [
         const HomePageBlock(),
-        const Divider(),
+        // const Divider(),
         Consumer<AppProvider>(
           builder: (ctx, data, child) {
+            final transactionsByDates =
+                sortTransactionsByDate(data.transactions);
+
             return Container(
-                child: Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                itemCount: data.transactions.length,
-                itemBuilder: (BuildContext context, int index) {
-                  if (data.transactions[index].type ==
-                      TransactionType.exchange) {
-                    return ExchangeTransactionCard(
-                        transaction: data.transactions[index]);
-                  } else {
-                    return TransactionCard(
-                        transaction: data.transactions[index]);
-                  }
-                },
+              child: Expanded(
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: transactionsByDates.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    if (transactionsByDates[index] is String) {
+                      return transactionsDate(transactionsByDates[index]);
+                    } else if (transactionsByDates[index].type ==
+                        TransactionType.exchange) {
+                      return ExchangeTransactionCard(
+                        transaction: transactionsByDates[index],
+                        onDelete: () async {
+                          await data.deleteTransaction(transactionsByDates[index].id);
+                          SnackBarHelper.show(context, 'Транзакція видалена');
+                        },
+                      );
+                    } else {
+                      return TransactionCard(
+                        transaction: transactionsByDates[index],
+                        onDelete: () async {
+                          await data.deleteTransaction(transactionsByDates[index].id);
+                          SnackBarHelper.show(context, 'Транзакція видалена');
+                        },
+                      );
+                    }
+                  },
+                ),
               ),
-            ));
+            );
           },
         ),
         if (_loading)
@@ -142,5 +160,35 @@ class _TransactionsListPageState extends State<TransactionsListPage> {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  Widget transactionsDate(String date) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20, bottom: 10),
+      child: Center(
+        child: Text(
+          date,
+          style: const TextStyle(fontSize: 14, color: Colors.grey),
+        ),
+      ),
+    );
+  }
+
+  List<dynamic> sortTransactionsByDate(transactions) {
+    List<dynamic> transactionsByDates = [];
+    String currentDate = '';
+
+    transactions.forEach((t) {
+      final date = UaDateHelper.parseShortDate(t.date);
+
+      if (date != currentDate) {
+        transactionsByDates.add(date);
+      }
+
+      transactionsByDates.add(t);
+      currentDate = date;
+    });
+
+    return transactionsByDates;
   }
 }

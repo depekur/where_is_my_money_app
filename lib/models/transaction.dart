@@ -9,7 +9,7 @@ class Transaction {
   final String id;
   final String name;
   final double sum;
-  final String date;
+  String date;
   final String type;
   Wallet wallet;
   Category? category;

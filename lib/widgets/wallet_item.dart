@@ -16,11 +16,11 @@ class WalletItem extends StatelessWidget {
 
   Widget _balance() {
     return Text(
-      '${wallet.balance} ${wallet.currency.code}',
+      '${wallet.currency.symbol} ${wallet.balance.toStringAsFixed(2)} ',
       style: TextStyle(
         fontSize: small ? 16 : 19,
-        fontWeight: FontWeight.w600,
-        color: Colors.green.shade300,
+        fontWeight: FontWeight.w400,
+        color: Colors.black87,
       ),
     );
   }
@@ -30,7 +30,7 @@ class WalletItem extends StatelessWidget {
     return Container(
       // margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
       child: Card(
-        elevation: 2,
+        elevation: 3,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
           child: Row(
@@ -45,6 +45,13 @@ class WalletItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      // Text(
+                      //   '${wallet.currency.code}',
+                      //   style: TextStyle(
+                      //     fontSize: small ? 14 : 18 ,
+                      //     color: Colors.black54,
+                      //   ),
+                      // ),
                       Icon(
                         Icons.wallet,
                         color: Colors.indigoAccent.shade200,
@@ -62,14 +69,6 @@ class WalletItem extends StatelessWidget {
                   SizedBox(height: small ? 14 : 20),
                   Row(
                     children: [
-                      Text(
-                        wallet.currency.symbol,
-                        style: TextStyle(
-                          fontSize: small ? 14 : 18 ,
-                          color: Colors.black54,
-                        ),
-                      ),
-                      const SizedBox(width: 5),
                       Text(
                         wallet.uaType,
                         style: const TextStyle(
@@ -99,7 +98,10 @@ class WalletItem extends StatelessWidget {
                           onEdit!(wallet);
                         }
                       },
-                      icon: const Icon(Icons.settings),
+                      icon: Icon(
+                        Icons.settings,
+                        color: Colors.indigoAccent.shade200,
+                      ),
                     ),
                   if (onEdit != null) const SizedBox(height: 20),
                   _balance(),

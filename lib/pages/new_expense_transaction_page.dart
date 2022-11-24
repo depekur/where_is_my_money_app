@@ -83,7 +83,8 @@ class _NewExpenseTransactionPageState extends State<NewExpenseTransactionPage> {
                   });
                 },
               ),
-              const Divider(height: 30),
+              const SizedBox(height: 30),
+              // const Divider(height: 30),
               ElevatedButton(
                 onPressed: _loading
                     ? null

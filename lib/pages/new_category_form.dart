@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../models/category.dart';
 import '../providers/app_provider.dart';
 
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+
 class NewCategoryForm extends StatefulWidget {
   static const route = '/category-form';
 
@@ -34,6 +36,7 @@ class _NewCategoryFormState extends State<NewCategoryForm> {
       _category = Category(
         name: widget.category!.name,
         id: widget.category!.id,
+        color: widget.category!.color,
       );
     }
   }
@@ -74,7 +77,8 @@ class _NewCategoryFormState extends State<NewCategoryForm> {
 
         Navigator.of(context).pop();
       } catch (err) {
-        _showSnackBar('Отакої! Шось пішло не так. Спробуйте ще раз трохи пізьніше');
+        _showSnackBar(
+            'Отакої! Шось пішло не так. Спробуйте ще раз трохи пізьніше');
       } finally {
         setState(() {
           _loading = false;
@@ -86,7 +90,8 @@ class _NewCategoryFormState extends State<NewCategoryForm> {
         _showSnackBar('Назва категорії успішно змінена');
         Navigator.of(context).pop();
       } catch (e) {
-        _showSnackBar('От халепа! Шось пішло не так. Спробуйте ще раз трохи пізьніше');
+        _showSnackBar(
+            'От халепа! Шось пішло не так. Спробуйте ще раз трохи пізьніше');
       } finally {
         setState(() {
           _loading = false;
@@ -95,14 +100,50 @@ class _NewCategoryFormState extends State<NewCategoryForm> {
     }
   }
 
+  void _openColorPickerDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          titlePadding: const EdgeInsets.all(0),
+          contentPadding: const EdgeInsets.all(0),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: _category.color,
+              onColorChanged: (color) {
+                setState(() {
+                  _category = Category(
+                      id: _category.id,
+                      name: _category.name,
+                      color: color
+                  );
+                });
+              },
+              colorPickerWidth: 300,
+              pickerAreaHeightPercent: 0.7,
+              enableAlpha: false,
+              displayThumbColor: true,
+              paletteType: PaletteType.hsvWithHue,
+              labelTypes: const [],
+              pickerAreaBorderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(2),
+                topRight: Radius.circular(2),
+              ),
+              // hexInputController: textController,
+              portraitOnly: true,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Редагувати категорію' : 'Створити категорію'),
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.save))
-        ],
+        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.save))],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -142,22 +183,40 @@ class _NewCategoryFormState extends State<NewCategoryForm> {
                         _category = Category(
                           id: _category.id,
                           name: val,
+                          color: _category.color,
                         );
                         setState(() {});
                       }
                     },
                   ),
                   const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _openColorPickerDialog,
+                        child: const Text('Вибрати колір'),
+                      ),
+                      CircleAvatar(
+                        backgroundColor: _category.color,
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: _loading ? null : () {
-                      _save(context);
-                    },
+                    onPressed: _loading
+                        ? null
+                        : () {
+                            _save(context);
+                          },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Icon(Icons.save),
                         const SizedBox(width: 10),
-                        Text(isEditing ? 'Оновити категорію' : 'Створити категорію'),
+                        Text(isEditing
+                            ? 'Оновити категорію'
+                            : 'Створити категорію'),
                       ],
                     ),
                   )

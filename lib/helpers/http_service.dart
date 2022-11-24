@@ -24,6 +24,7 @@ class HttpService {
 
       return json.decode(res.body);
     } catch (e) {
+      print(url);
       rethrow;
     }
   }
@@ -49,6 +50,31 @@ class HttpService {
 
       return body;
     } catch (e) {
+      print(e);
+
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> delete(String url) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.get('token');
+    final uri = Uri.parse('$serverUrl$url');
+
+    try {
+      final res = await http.delete(
+        uri,
+        body: null,
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      final body = json.decode(res.body);
+
+      return body;
+    } catch (e) {
+      print(e);
       rethrow;
     }
   }

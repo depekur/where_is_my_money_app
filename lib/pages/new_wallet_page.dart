@@ -118,7 +118,7 @@ class _NewWalletPageState extends State<NewWalletPage> {
           children: currency.map((c) {
             return Row(children: [
               ChoiceChip(
-                selectedColor: Colors.green.shade300,
+                selectedColor: Colors.green.shade100,
                 elevation: 3,
                 avatar: Text(
                   c.symbol,
@@ -162,7 +162,7 @@ class _NewWalletPageState extends State<NewWalletPage> {
   List<Widget> _walletTypeSelect() {
     return [
       ChoiceChip(
-        selectedColor: Colors.green.shade300,
+        selectedColor: Colors.green.shade100,
         elevation: 3,
         avatar: const Icon(Icons.credit_card),
         label: const Text('КАРТА'),
@@ -187,7 +187,7 @@ class _NewWalletPageState extends State<NewWalletPage> {
         width: 15,
       ),
       ChoiceChip(
-        selectedColor: Colors.green.shade300,
+        selectedColor: Colors.green.shade100,
         elevation: 3,
         avatar: Icon(Icons.attach_money),
         label: const Text('КЄШ'),

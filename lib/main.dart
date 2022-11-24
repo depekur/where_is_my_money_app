@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:where_is_my_money_app/pages/categories_list_page.dart';
 import 'package:where_is_my_money_app/pages/new_exchange_page.dart';
 import 'package:where_is_my_money_app/pages/new_expense_transaction_page.dart';
 import 'package:where_is_my_money_app/pages/new_income_transaction_page.dart';
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
               NewExpenseTransactionPage.route: (ctx) => const NewExpenseTransactionPage(),
               NewIncomeTransactionPage.route: (ctx) => const NewIncomeTransactionPage(),
               ExchangePage.route: (ctx) => const ExchangePage(),
+              CategoriesListPage.route: (ctx) => const CategoriesListPage(),
             },
           );
         },

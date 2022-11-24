@@ -28,6 +28,7 @@ class _CategorySelectState extends State<CategorySelect> {
         padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const Text('Категорія витрати:'),
             const SizedBox(
@@ -39,6 +40,9 @@ class _CategorySelectState extends State<CategorySelect> {
                 runSpacing: 1,
                 children: data.categories.map((c) {
                   return ChoiceChip(
+                    elevation: 3,
+                    avatar: CircleAvatar(backgroundColor: c.color, radius: 10),
+                    selectedColor: Colors.green.shade100,
                     label: Text(c.name),
                     selected: _selected != null ? _selected!.id == c.id : false,
                     onSelected: (bool selected) {

@@ -39,33 +39,43 @@ class _CategoriesListPageState extends State<CategoriesListPage> {
   Widget _categoryItem(Category category) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text(category.name),
-            ),
-            Row(
-              children: [
-                IconButton(
-                    onPressed: () {
-                      _showNewCategoryForm(ctx: context, category: category);
-                    },
-                    icon: Icon(
-                      Icons.edit,
-                      color: Colors.green.shade200,
-                    )),
-                // IconButton(
-                //     onPressed: () {},
-                //     icon: Icon(
-                //       Icons.delete,
-                //       color: Colors.red.shade200,
-                //     )),
-              ],
-            ),
-          ],
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  CircleAvatar(
+                    backgroundColor: category.color,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(category.name),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        _showNewCategoryForm(ctx: context, category: category);
+                      },
+                      icon: Icon(
+                        Icons.edit,
+                        color: Colors.green.shade200,
+                      )),
+                  // IconButton(
+                  //     onPressed: () {},
+                  //     icon: Icon(
+                  //       Icons.delete,
+                  //       color: Colors.red.shade200,
+                  //     )),
+                ],
+              ),
+            ],
+          ),
         ),
         const Divider(),
       ],
@@ -87,7 +97,7 @@ class _CategoriesListPageState extends State<CategoriesListPage> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.only(top: 10),
         child: Consumer<AppProvider>(
           builder: (ctx, data, child) {
             return ListView.builder(

@@ -1,22 +1,28 @@
+import 'package:flutter/material.dart';
+
 class Category {
   final String id;
   final String name;
+  final Color color;
 
   Category({
     required this.id,
     required this.name,
+    required this.color,
   });
 
-  Map<String, String> get updateDto {
+  Map<String, dynamic> get updateDto {
     return {
       'id': id,
-      'name': name
+      'name': name,
+      'color': color.value,
     };
   }
 
-  Map<String, String> get createDto {
+  Map<String, dynamic> get createDto {
     return {
-      'name': name
+      'name': name,
+      'color': color.value,
     };
   }
 
@@ -24,13 +30,15 @@ class Category {
     return Category(
       id: c['_id'],
       name: c['name'],
+      color: c['color'] != null ? Color(c['color']) : Colors.lightGreen,
     );
   }
 
   static Category empty() {
     return Category(
-        id: '',
-        name: '',
+      id: '',
+      name: '',
+      color: Colors.lightGreen,
     );
   }
 }

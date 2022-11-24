@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../pages/categories_list_page.dart';
+import '../pages/statistics_page.dart';
 import '../pages/wallets_page.dart';
 import '../providers/app_provider.dart';
 
@@ -52,7 +53,9 @@ class _HomePageBlockState extends State<HomePageBlock> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            OutlinedButton(onPressed: () {}, child: Row(
+            OutlinedButton(onPressed: () {
+              Navigator.of(context).pushNamed(StatisticsPage.route);
+            }, child: Row(
               children: const [
                 Icon(Icons.bar_chart),
                 SizedBox(width: 5),
@@ -60,8 +63,7 @@ class _HomePageBlockState extends State<HomePageBlock> {
               ],
             ),),
             OutlinedButton(onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (ctx) => const WalletsPage()));
+              Navigator.of(context).pushNamed(WalletsPage.route);
             }, child: Row(
               children: const [
                 Icon(Icons.wallet),
@@ -70,8 +72,7 @@ class _HomePageBlockState extends State<HomePageBlock> {
               ],
             ),),
             OutlinedButton(onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (ctx) => const CategoriesListPage()));
+              Navigator.of(context).pushNamed(CategoriesListPage.route);
             }, child: Row(
               children: const [
                 Icon(Icons.category),

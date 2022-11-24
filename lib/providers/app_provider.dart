@@ -5,6 +5,7 @@ import 'package:where_is_my_money_app/models/wallet.dart';
 import 'package:where_is_my_money_app/models/category.dart';
 import 'package:where_is_my_money_app/models/transaction.dart';
 
+import '../helpers/date_filter.dart';
 import '../helpers/transactions_page_size.dart';
 
 class AppProvider with ChangeNotifier {
@@ -13,6 +14,12 @@ class AppProvider with ChangeNotifier {
   List<Category> _categories = [];
   List<Transaction> _transactions = [];
   List<Currency> _currency = [];
+
+  dynamic _statistic;
+
+  dynamic get statistic {
+    return _statistic;
+  }
 
   List<Wallet> get wallets {
     return [..._wallets];
@@ -32,6 +39,20 @@ class AppProvider with ChangeNotifier {
 
   String get total {
     return _totalEur;
+  }
+
+  Future<dynamic> fetchAndSetStatistics({
+    required String filterType,
+    required String startDate,
+    required String endDate,
+  }) async {
+    String url = 'transaction/statistic?filterType=${filterType}&startDate=${startDate}&endDate=${endDate}';
+    final statistic = await HttpService.get(url);
+
+    if (statistic != null) {
+      _statistic = statistic;
+      notifyListeners();
+    }
   }
 
   Future<dynamic> fetchAndSetTotal() async {
@@ -64,11 +85,9 @@ class AppProvider with ChangeNotifier {
   }
 
   Future<void> fetchAndSetTransactions() async {
-    final String url = 'transaction?offset=${_transactions.length}&size=$transactionPageSize';
+    final String url =
+        'transaction?offset=${_transactions.length}&size=$transactionPageSize';
     final List<dynamic> transactions = await HttpService.get(url);
-
-    print(url);
-    print(transactions);
 
     if (transactions.isNotEmpty) {
       if (_transactions.isNotEmpty) {
@@ -180,9 +199,6 @@ class AppProvider with ChangeNotifier {
     );
 
     if (resData.isNotEmpty) {
-
-      print(resData);
-
       final transaction = Transaction.fromResponse(resData);
       _transactions.insert(0, transaction);
 
@@ -203,11 +219,26 @@ class AppProvider with ChangeNotifier {
 
     if (resData.isNotEmpty) {
 
-      print('resData');
       print(resData);
 
       final transaction = Transaction.fromResponse(resData);
+
       _transactions.insert(0, transaction);
+
+      await fetchAndSetTotal();
+      await fetchAndSetWallets();
+
+      notifyListeners();
+    } else {
+      throw Exception('Something goes wrong');
+    }
+  }
+
+  Future<void> deleteTransaction(String id) async {
+    final dynamic resData = await HttpService.delete('transaction/$id');
+
+    if (resData.isNotEmpty) {
+      _transactions.removeWhere((t) => t.id == id);
 
       await fetchAndSetTotal();
       await fetchAndSetWallets();
